@@ -1,0 +1,31 @@
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+}
+
+#lessonid{
+    text-align: left;
+    font-size: medium;
+}
+
+#caption{
+    display: block;
+    text-align: center;
+    font-size: 2em;
+    padding-bottom: -1em;
+}
+
+#myInput{
+    text-align: center;
+}
+
+#mySubmit{
+    align-self: center;
+    padding: 5px 10px;
+    font-size: 1.5em;
+    color: white;
+    background-color: rgb(31, 190, 253);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.25s;
+}
