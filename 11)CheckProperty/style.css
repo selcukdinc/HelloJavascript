@@ -1,0 +1,14 @@
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 2em;
+    text-align: center;
+}
+
+#lessonid{
+    text-align: left;
+    font-size: medium;
+}
+
+#mySubmit{
+    font-size: 1em;
+}
