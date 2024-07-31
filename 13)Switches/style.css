@@ -1,0 +1,9 @@
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 2em;
+}
+
+#lessonid{
+    text-align: left;
+    font-size: medium;
+}
