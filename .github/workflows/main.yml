@@ -1,0 +1,84 @@
+name: Update README with Latest Branch Commits
+
+on:
+  push:
+    branches:
+      - '**'  # Tüm branch'lerdeki push işlemlerini tetikle
+  workflow_dispatch:  # Manuel olarak tetiklemek için
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Fetch All Branches
+        run: git fetch --all
+
+      - name: Append Branch Info to README
+        run: |
+    
+          # Mevcut README içeriğini oku, ancak "# Branch Information" ve sonrasını çıkar
+          existing_content=$(awk '/# Branch Information/{exit} {print}' README.md)
+          
+          # Yeni içeriği oluştur
+          branch_info="# Branch Information\n\n"
+      
+          branch_info="${branch_info}\n\n"
+      
+          # Tüm diğer branch'leri dolaş ve bilgileri ekle
+          for branch in $(git branch -r | grep -v 'HEAD\|main'); do
+            branch_name=${branch#origin/}
+            branch_info="${branch_info}- ${branch_name}\n"
+            branch_info="${branch_info}$(git log $branch -3 --pretty=format:"  - %h - %s%n%b" | awk '
+              BEGIN { RS = ""; FS = "\n" }
+              {
+                print "  - " $1
+                if (NF > 1) {
+                  for (i = 2; i <= NF; i++) {
+                    print "        - " $i
+                  }
+                } else {
+                  print "        - No description provided."
+                }
+              }
+            ')"
+            branch_info="${branch_info}\n\n"
+            
+          done
+
+           # Main branch'i özel olarak ekle
+            for branch in $(git branch -r | grep 'HEAD\|main'); do
+            branch_name=${branch#origin/}
+            branch_info="${branch_info}- ${branch_name}\n"
+            branch_info="${branch_info}$(git log $branch -3 --pretty=format:"  - %h - %s%n%b" | awk '
+              BEGIN { RS = ""; FS = "\n" }
+              {
+                print "  - " $1
+                if (NF > 1) {
+                  for (i = 2; i <= NF; i++) {
+                    print "        - " $i
+                  }
+                } else {
+                  print "        - No description provided."
+                }
+              }
+            ')"
+            branch_info="${branch_info}\n\n"
+            
+          done
+      
+          # Mevcut içeriğin altına branch bilgilerini ekle
+          echo -e "${existing_content}\n\n${branch_info}" > README.md
+
+        shell: bash
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "actions@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git add README.md
+          git commit -m "Update README with latest branch commits" || echo "No changes to commit"
+          git push origin main
